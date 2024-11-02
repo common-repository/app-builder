@@ -10,7 +10,7 @@
  * Plugin Name:       App Builder - Create Native Android & iOS Apps On The Flight
  * Plugin URI:        https://appcheap.io/docs
  * Description:       The App Builder has it all: drag and drop mobile app, power and control over your app. Get started now!.
- * Version:           5.4.3
+ * Version:           5.4.6
  * Author:            Appcheap.io
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -37,37 +37,37 @@ if ( ! defined( 'APP_BUILDER_PLUGIN_FILE' ) ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$container = new AppBuilder\Di\App\Container();
+$app_builder_container = new AppBuilder\Di\App\Container();
 
 /**
  * Bind http client.
  */
-$container->set( 'http', AppBuilder\Di\App\Http\HttpClientFactory::createHttpClient( 'WordPress' ) );
+$app_builder_container->set( 'http', AppBuilder\Di\App\Http\HttpClientFactory::createHttpClient( 'WordPress' ) );
 
 /**
  * Bind activator.
  */
-$container->set( 'activator', AppBuilder\Activator::class );
+$app_builder_container->set( 'activator', AppBuilder\Activator::class );
 
 /**
  * Bind deactivator.
  */
-$container->set( 'deactivator', AppBuilder\Deactivator::class );
+$app_builder_container->set( 'deactivator', AppBuilder\Deactivator::class );
 
 /**
  * Bind App Settings.
  */
-$container->set( 'settings', AppBuilder\Setting::class );
+$app_builder_container->set( 'settings', AppBuilder\Setting::class );
 
 /**
  * Bind App Addons.
  */
-$container->set( 'addons', AppBuilder\Addons::class );
+$app_builder_container->set( 'addons', AppBuilder\Addons::class );
 
 /**
  * Bind App Features.
  */
-$container->set(
+$app_builder_container->set(
 	'features',
 	function ( $c ) {
 		return new AppBuilder\Di\Service\Feature\FeatureFactory( $c->get( 'http' ) );
@@ -77,7 +77,7 @@ $container->set(
 /**
  * Bind App Integrations.
  */
-$container->set(
+$app_builder_container->set(
 	'integrations',
 	function ( $c ) {
 		return new AppBuilder\Di\Service\Integration\Integrations( $c->get( 'http' ) );
@@ -87,19 +87,19 @@ $container->set(
 /**
  * Bind App Vendor store.
  */
-$container->set( 'vendor', AppBuilder\Di\Service\Vendor\StoreFactory::class );
-$container->set( 'store', AppBuilder\Di\Service\Store\Store::class );
+$app_builder_container->set( 'vendor', AppBuilder\Di\Service\Vendor\StoreFactory::class );
+$app_builder_container->set( 'store', AppBuilder\Di\Service\Store\Store::class );
 
 /**
  * Bind Admin and Frontend.
  */
-$container->set( 'admin', AppBuilder\Di\Service\Admin\Admin::class );
-$container->set( 'frontend', AppBuilder\Di\Service\Frontend\Frontend::class );
+$app_builder_container->set( 'admin', AppBuilder\Di\Service\Admin\Admin::class );
+$app_builder_container->set( 'frontend', AppBuilder\Di\Service\Frontend\Frontend::class );
 
 /**
  * Bind Token.
  */
-$container->set(
+$app_builder_container->set(
 	'token',
 	function ( $c ) {
 		return new AppBuilder\Classs\Token( $c->get( 'settings' )->feature( 'jwt_authentication' ) );
@@ -109,12 +109,12 @@ $container->set(
 /**
  * App builder template.
  */
-$container->set( 'app_builder_template', AppBuilder\Classs\BuilderTemplate::class );
+$app_builder_container->set( 'app_builder_template', AppBuilder\Classs\BuilderTemplate::class );
 
 /**
  * Bind App Auth.
  */
-$container->set(
+$app_builder_container->set(
 	'auth',
 	function ( $c ) {
 		return new AppBuilder\Di\Service\Auth\Auth( $c->get( 'http' ) );
@@ -122,9 +122,19 @@ $container->set(
 );
 
 /**
+ * Bind Cache.
+ */
+$app_builder_container->set(
+	'cache',
+	function ( $c ) {
+		return new AppBuilder\Di\Service\Api\Cache( $c->get( 'settings' )->feature( 'cache_control' ) );
+	}
+);
+
+/**
  * The global App Builder container.
  */
-$GLOBALS['app_builder'] = $container;
+$GLOBALS['app_builder'] = $app_builder_container;
 
 /**
  * Alias of App Builder container.

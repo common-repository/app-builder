@@ -226,64 +226,61 @@ class Api extends Base {
 		 */
 		$template_id = $id > 0 ? $id : $template_active_id;
 
+		$cache_key   = "app_builder_settings-$template_id";
+		$cache_store = app_builder()->get( 'cache' );
+
 		/**
 		 * Get settings from cached
 		 */
-		$result = wp_cache_get( "settings-$template_id", 'app-builder' );
-
-		if ( false === $result ) {
-
-			/**
-			 * Get post by id
-			 */
-			$template = get_post( $id > 0 ? $id : $template_active_id );
-
-			/**
-			 * Get at least one template in list
-			 */
-			if ( ! $template ) {
-				$templates = get_posts(
-					array(
-						'post_type'   => 'app_builder_template',
-						'status'      => 'publish',
-						'numberposts' => 1,
-					)
-				);
-				$template  = count( $templates ) > 0 ? $templates[0] : null;
-			}
-
-			/**
-			 * Prepare template data
-			 */
-			$template_data = array(
-				'data'     => is_null( $template ) ? array() : json_decode( $template->post_content ),
-				'features' => apply_filters( 'app_builder_features_public_data', array() ),
-			);
-
-			/**
-			 * Filter data setting before response
-			 */
-			$result = apply_filters( 'app_builder_prepare_settings_data', $template_data );
-
-			/**
-			 * Update cached
-			 */
-			wp_cache_set( "settings-$template_id", $result, 'app-builder' );
+		$result = $cache_store->get( $cache_key );
+		if ( false !== $result ) {
+			$response = new WP_REST_Response( $result, 200 );
+			return $cache_store->set_header( $response );
 		}
+
+		/**
+		 * Get post by id
+		 */
+		$template = get_post( $id > 0 ? $id : $template_active_id );
+
+		/**
+		 * Get at least one template in list
+		 */
+
+		if ( ! $template ) {
+			$templates = get_posts(
+				array(
+					'post_type'   => 'app_builder_template',
+					'status'      => 'publish',
+					'numberposts' => 1,
+				)
+			);
+			$template  = count( $templates ) > 0 ? $templates[0] : null;
+		}
+
+		/**
+		 * Prepare template data
+		 */
+		$template_data = array(
+			'data'     => is_null( $template ) ? array() : json_decode( $template->post_content ),
+			'features' => apply_filters( 'app_builder_features_public_data', array() ),
+		);
+
+		/**
+		 * Filter data setting before response
+		 */
+		$data = apply_filters( 'app_builder_prepare_settings_data', $template_data );
 
 		/**
 		 * Return data
 		 */
-		$response = new WP_REST_Response( $result, 200 );
+		$response = new WP_REST_Response( $data, 200 );
 
-		/**
-		 * Set cache control
-		 */
-		if ( defined( 'APP_BUILDER_CACHED_SETTINGS' ) && APP_BUILDER_CACHED_SETTINGS ) {
-			$response->set_headers( array( 'Cache-Control' => 'max-age=3600' ) );
-		}
+		// Cache response.
+		$cache_store->set( $cache_key, $data );
 
-		return $response;
+		$response = new WP_REST_Response( $data, 200 );
+		return $cache_store->set_header( $response );
 	}
 
 	/**

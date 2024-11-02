@@ -204,8 +204,14 @@ class Review extends WP_REST_Controller {
 			foreach ( $wcfm_review_categories as $wcfm_review_cat_key => $wcfm_review_category ) {
 				if ( isset( $category_review_rating[ $wcfm_review_cat_key ] ) ) {
 					$meta[] = array(
-						'category' => $wcfm_review_category['category'],
-						'rating'   => $category_review_rating[ $wcfm_review_cat_key ],
+						'id'          => $wcfm_review_cat_key,
+						'name'        => $wcfm_review_category['category'],
+						'description' => '',
+						'value'       => $category_review_rating[ $wcfm_review_cat_key ],
+						'default'     => 5,
+						'input'       => 'rate-star',
+						'type'        => 'integer',
+						'context'     => 'view',
 					);
 				}
 			}
@@ -254,38 +260,55 @@ class Review extends WP_REST_Controller {
 
 		$categories = array();
 		foreach ( $wcfm_review_categories as $key => $category ) {
-			$item                = $category;
-			$item['index']       = $key;
-			$item['type']        = 'integer';
-			$item['input']       = 'rate-star';
-			$item['default']     = 5;
-			$item['description'] = 'The rating for the category ' . $category['category'];
-			$categories[ $key ]  = $item;
+			$item               = array(
+				'id'          => $key,
+				'name'        => $category['category'],
+				'description' => 'The rating for the category ' . $category['category'],
+				'value'       => 5,
+				'default'     => 5,
+				'input'       => 'rate-star',
+				'type'        => 'integer',
+				'context'     => 'edit',
+			);
+			$categories[ $key ] = $item;
 		}
 
 		$form = array(
 			'wcfm_store_review_category'  => array(
+				'id'          => 'wcfm_store_review_category',
+				'name'        => 'Review Category',
 				'type'        => 'array',
 				'input'       => 'rating',
 				'description' => 'The review category.',
+				'value'       => array(),
+				'context'     => 'edit',
 				'items'       => $categories,
 			),
 			'wcfm_review_store_id'        => array(
+				'id'          => 'wcfm_review_store_id',
+				'name'        => 'Store ID',
 				'type'        => 'integer',
 				'input'       => 'hidden',
 				'description' => 'The store id.',
 				'hidden'      => true,
+				'context'     => 'edit',
 			),
 			'wcfm_review_author_id'       => array(
+				'id'          => 'wcfm_review_author_id',
+				'name'        => 'Author ID',
 				'type'        => 'integer',
 				'input'       => 'hidden',
 				'description' => 'The author id.',
 				'hidden'      => true,
+				'context'     => 'edit',
 			),
 			'wcfmmp_store_review_comment' => array(
+				'id'          => 'wcfmmp_store_review_comment',
+				'name'        => 'Review Comment',
 				'type'        => 'string',
 				'input'       => 'textarea',
 				'description' => 'The review comment.',
+				'context'     => 'edit',
 			),
 		);
 

@@ -4,7 +4,7 @@ Donate link: https://1.envato.market/x9JBRR
 Tags: app builder, woocommerce app, news app, flutter, mobile builder
 Requires at least: 5.6
 Tested up to: 6.6.2
-Stable tag: 5.4.3
+Stable tag: 5.4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP: 7.4
@@ -152,6 +152,13 @@ Yeah! The app support multi languages
 12. Multiple page
 
 == Changelog ==
+
+= 5.4.5 - 30-Oct-2024 =
+Fixed: Change variable
+
+= 5.4.4 - 30-Oct-2024 =
+Added: Cache control feature
+Update: WCFM store review
 
 = 5.4.3 - 17-Oct-2024 =
 Integration: Translate Multilingual sites – TranslatePress plugin

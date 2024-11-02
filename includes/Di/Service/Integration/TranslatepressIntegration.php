@@ -31,7 +31,7 @@ class TranslatepressIntegration implements IntegrationInterface {
 		'description'   => 'Experience a better way to translate your WordPress site and go multilingual, directly from the front-end using a visual translation interface.',
 		'icon'          => 'https://ps.w.org/translatepress-multilingual/assets/icon.svg',
 		'url'           => 'https://wordpress.org/plugins/translatepress-multilingual/',
-		'author'        => 'Razorpay',
+		'author'        => 'Cozmoslabs, Razvan Mocanu, Madalin Ungureanu, Cristophor Hurduban',
 		'documentation' => 'https://appcheap.io/docs/cirilla-developers-docs/integrations/translate-multilingual-sites-translatepress/',
 		'category'      => 'Translate, Multilingual',
 	);

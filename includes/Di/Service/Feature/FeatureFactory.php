@@ -54,6 +54,7 @@ class FeatureFactory {
 			ShoppingVideo::META_KEY            => ShoppingVideo::class,
 			ForgotPassword::META_KEY           => ForgotPassword::class,
 			Captcha::META_KEY                  => Captcha::class,
+			CacheControl::META_KEY             => CacheControl::class,
 		);
 	}
 

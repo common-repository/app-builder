@@ -24,6 +24,13 @@ use AppBuilder\Utils;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Class Product
+ *
+ * @link       https://appcheap.io
+ * @since      5.0.0
+ * @package    AppBuilder
+ */
 class Product {
 
 	/**
@@ -672,29 +679,31 @@ class Product {
 		/**
 		 * Create key for save categories
 		 */
-		$key = "app-builder-categories-$parent-$lang";
-		wp_cache_set( 'app-builder-category-key', $key, 'app-builder' );
+		$cache_key = "app-builder-categories-$parent-$lang";
+
+		$cache_store = app_builder()->get( 'cache' );
 
 		/**
-		 * Get categories in cache
+		 * Get settings from cached
 		 */
-		$result = wp_cache_get( $key, 'app-builder' );
-
-		if ( false === $result ) {
-			$result = $this->get_category_by_parent_id( $parent );
-			/**
-			 * Update cached
-			 */
-			wp_cache_set( $key, $result, 'app-builder' );
+		$result = $cache_store->get( $cache_key );
+		if ( false !== $result ) {
+			$response = new WP_REST_Response( $result, 200 );
+			return $cache_store->set_header( $response );
 		}
+
+		$result = $this->get_category_by_parent_id( $parent );
 
 		/**
 		 * Return data
 		 */
 		$response = new WP_REST_Response( $result, 200 );
-		$response->set_headers( array( 'Cache-Control' => 'max-age=3600' ) );
 
-		return $response;
+		// Cache response.
+		$cache_store->set( $cache_key, $result );
+
+		$response = new WP_REST_Response( $result, 200 );
+		return $cache_store->set_header( $response );
 	}
 
 	/**
